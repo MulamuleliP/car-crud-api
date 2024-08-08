@@ -1,58 +1,57 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
-import axios from 'axios';
+import bodyParser from 'body-parser';
+import { countNissanFromCK, cars } from './nissanFromCk.js';
 
 const app = express();
+
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.static('public'));
 
-let cars = []; // Initialize an empty array for cars
+const apiRouter = express.Router();
+app.use('/api', apiRouter);
 
-// Fetch car data from an external API (replace 'API_URL' with the actual URL)
-const fetchCarData = async () => {
-  try {
-    const response = await axios.get('API_URL'); // Replace 'API_URL' with the actual URL
-    cars = response.data;
-  } catch (error) {
-    console.error('Error fetching car data:', error);
-  }
-};
+const carsRouter = express.Router();
+apiRouter.use('/cars', carsRouter);
 
-// Fetch car data on server start
-fetchCarData();
+carsRouter.get('/', getCars);
+carsRouter.post('/', addCar);
+carsRouter.get('/delete', deleteCar);
 
-// CRUD operations
-app.get('/api/cars', (req, res) => {
+app.get('/api/nissansFromCK', getNissansFromCK);
+
+function getCars(req, res) {
   res.json(cars);
-});
+}
 
-app.post('/api/cars', (req, res) => {
+function addCar(req, res) {
   const newCar = req.body;
   cars.push(newCar);
-  res.status(201).json(newCar);
-});
+  res.json(newCar);
+}
 
-app.put('/api/cars/:reg_number', (req, res) => {
-  const regNumber = req.params.reg_number;
-  const updatedCar = req.body;
-  cars = cars.map(car => car.reg_number === regNumber ? updatedCar : car);
-  res.json(updatedCar);
-});
+function deleteCar(req, res) {
+  const reg_number = req.query.reg_number;
+  const index = cars.findIndex((c) => c.reg_number === reg_number);
 
-app.delete('/api/cars/:reg_number', (req, res) => {
-  const regNumber = req.params.reg_number;
-  cars = cars.filter(car => car.reg_number !== regNumber);
-  res.status(204).send();
-});
+  if (index !== -1) {
+    cars.splice(index, 1);
+    res.status(200).json({ message: 'Car deleted' });
+  } else {
+    res.status(404).json({ message: 'Car not found' });
+  }
+}
 
-// Count how many Nissans are from Malmesbury
-app.get('/api/cars/nissansFromCK', (req, res) => {
-  const nissansFromCK = cars.filter(car => car.make === 'Nissan' && car.reg_number.startsWith('CK')).length;
-  res.json({ count: nissansFromCK });
-});
+function getNissansFromCK(req, res) {
+  const count = countNissanFromCK();
+  console.log(count);
+  res.json({ count });
+}
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3007;
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log('App starting on port', PORT);
 });

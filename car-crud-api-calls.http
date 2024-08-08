@@ -3,5 +3,12 @@
 ## Fetch Car data 
 GET https://bootcamp.projectcodex.co/cars.json
 
-## Get Nissan Count from Malmesbury
-GET /api/cars/nissansFromCK
+##count Nissan from CK
+http://localhost:3007/api/nissansFromCK?search=Nissan
+
+### cars data list
+http://localhost:3007/api/cars
+
+### deleted cars
+http://localhost:3007/api/cars/delete
+
