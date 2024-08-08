@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cars CRUD App</title>
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.0/dist/alpine.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./alphineData.js" defer></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div x-data="carApp" x-init="init">
+    <h1>Cars CRUD App</h1>
+    
+    <ul>
+      <template x-for="car in cars" :key="car.reg_number">
+        <li>
+          <span x-text="car.make + ' ' + car.model + ' (' + car.color + ') - ' + car.reg_number"></span>
+          <button @click="deleteCar(car.reg_number)">Delete</button>
+        </li>
+      </template>
+    </ul>
+    
+    <form @submit.prevent="addCar">
+      <input type="text" x-model="newCar.color" placeholder="Color" required>
+      <input type="text" x-model="newCar.make" placeholder="Make" required>
+      <input type="text" x-model="newCar.model" placeholder="Model" required>
+      <input type="text" x-model="newCar.reg_number" placeholder="Registration Number" required>
+      <button type="submit">Add Car</button>
+    </form>
+
+    <button @click="getMostPopularMake">Get Most Popular Make</button>
+    <div x-show="mostPopularMake">
+      Most Popular Make: <span x-text="mostPopularMake"></span>
+    </div>
+
+    <button @click="getNissanCountFromMalmesbury">Get Nissan Count from Malmesbury</button>
+    <div x-show="nissanCountFromMalmesbury !== null">
+      Nissan Count from Malmesbury: <span x-text="nissanCountFromMalmesbury"></span>
+    </div>
+  </div>
+</body>
+</html>

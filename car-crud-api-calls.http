@@ -1,0 +1,7 @@
+## Car Crud API
+
+## Fetch Car data 
+GET https://bootcamp.projectcodex.co/cars.json
+
+## Get Nissan Count from Malmesbury
+GET /api/cars/nissansFromCK
